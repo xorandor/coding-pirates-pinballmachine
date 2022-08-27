@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <script src="js/dap.umd.js"></script>
+        <script>
+            navigator.usb.addEventListener('disconnect', function(event){
+                console.log("device disconnect");
+                console.log(event);
+            });
+
+            async function scanDevices()
+            {
+                const device = await navigator.usb.requestDevice({
+                    filters: [{vendorId: 0x0d28, productId: 0x0204}]
+                });
+
+                const transport = new DAPjs.WebUSB(device);
+                const daplink = new DAPjs.DAPLink(transport);
+
+                try {
+                    await daplink.connect();
+                } catch (error) {
+                    console.error(error.message || error);
+                }
+
+                daplink.setSerialBaudrate(115200);
+                daplink.startSerialRead();
+
+                daplink.on(DAPjs.DAPLink.EVENT_SERIAL_DATA, function(data) {
+                    console.log(data); // first byte of data is length
+                    var outputElement = document.getElementById("output");
+                    outputElement.innerHTML += data;
+                    outputElement.scrollTop = outputElement.scrollHeight;
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <button onclick="scanDevices()">Scan devices</button>
+        <textarea rows="30" cols="100" id="output"></textarea>
+    </body>
+</html>

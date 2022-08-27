@@ -7,7 +7,7 @@
                 console.log(event);
             });
 
-            async function scanDevices()
+            async function start()
             {
                 const device = await navigator.usb.requestDevice({
                     filters: [{vendorId: 0x0d28, productId: 0x0204}]
@@ -20,22 +20,46 @@
                     await daplink.connect();
                 } catch (error) {
                     console.error(error.message || error);
+                    alert(error)
                 }
 
                 daplink.setSerialBaudrate(115200);
                 daplink.startSerialRead();
 
+                var buffer = "";
+
                 daplink.on(DAPjs.DAPLink.EVENT_SERIAL_DATA, function(data) {
-                    console.log(data); // first byte of data is length
-                    var outputElement = document.getElementById("output");
-                    outputElement.innerHTML += data;
-                    outputElement.scrollTop = outputElement.scrollHeight;
+
+                    buffer += data;
+
+                    while (true) {
+                        var datarowEnd = buffer.indexOf('\r\n');
+
+                        if(datarowEnd == -1)
+                        {
+                            break;
+                        }
+
+                        var datarow = buffer.substring(0, datarowEnd).trim();
+
+                        buffer = buffer.substring(datarowEnd + 1);
+
+                        commandReceived(datarow);
+                    }
                 });
+            }
+
+            function commandReceived(command)
+            {
+                console.log(command); // first byte of data is length
+                var outputElement = document.getElementById("output");
+                outputElement.innerHTML += command + '\n';
+                outputElement.scrollTop = outputElement.scrollHeight;
             }
         </script>
     </head>
     <body>
-        <button onclick="scanDevices()">Scan devices</button>
+        <button onclick="start()">Start</button>
         <textarea rows="30" cols="100" id="output"></textarea>
     </body>
 </html>

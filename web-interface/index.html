@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flip-Flip</title>
+    <script src="js/dap.umd.js"></script>
+    <style>
+      body {
+        background-image: url("https://steamcdn-a.akamaihd.net/apps/csgo/blog/images/wallpaper_nologo.jpg");
+      }
+      h1 {
+        font-size: 10rem;
+        text-align: center;
+        color: limegreen;
+      }
+      textarea {
+        min-width: 700px;
+      }
+      button {
+        display: block;
+        margin: auto;
+      }
+      ul {
+        list-style-type: none;
+      }
+      ul li {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="lives"></ul>
+    <h1 id="point"></h1>
+    <h2 id="status"></h2>
+    <button id="start">Spil</button>
+    <script type="module" src="pinball.js"></script>
+  </body>
+</html>

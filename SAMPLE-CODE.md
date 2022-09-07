@@ -19,11 +19,11 @@ while True:
 from microbit import *
 
 while True:
-    display.scroll('A')
+    #display.scroll('A')
     #display.show(Image.HEART)
     sleep(1000)
-    print("POINT=3")
+    print("POINT=3") # 1-xxxxxxx
     print("STATUS=enter")
     print("STATUS=out")
-    print("LYD=A")
+    print("LYD=A") # A,B,C eller D
 ```

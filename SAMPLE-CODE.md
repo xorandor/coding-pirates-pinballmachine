@@ -8,10 +8,30 @@ from microbit import *
 while True:
     if button_a.is_pressed():
         display.show(Image.HAPPY)
-        print("POINT=3")
+        print("LYD=A")
+        print("STATUS=enter")
+        sleep(500)
     elif button_b.is_pressed():
         display.show(Image.SAD)
-        print("LYD=A")
+        print("LYD=B")
+        print("STATUS=out")
+        sleep(500)
+    elif pin0.is_touched():
+        display.show(Image.SAD)
+        print("POINT=1000")
+        print("LYD=C")
+        sleep(500)
+    elif pin1.is_touched():
+        display.show(Image.SAD)
+        print("POINT=1500")
+        print("LYD=D")
+        sleep(500)
+    elif pin2.is_touched():
+        display.show(Image.SAD)
+        print("POINT=1500")
+        print("LYD=D")
+        sleep(500)
+
     display.clear()
 
 #eller

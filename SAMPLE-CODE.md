@@ -17,17 +17,17 @@ while True:
         print("STATUS=out")
         sleep(500)
     elif pin0.is_touched():
-        display.show(Image.SAD)
+        display.show(Image.HEART)
         print("POINT=1000")
         print("LYD=C")
         sleep(500)
     elif pin1.is_touched():
-        display.show(Image.SAD)
+        display.show(Image.NO)
         print("POINT=1500")
         print("LYD=D")
         sleep(500)
     elif pin2.is_touched():
-        display.show(Image.SAD)
+        display.show(Image.SILLY)
         print("POINT=1500")
         print("LYD=D")
         sleep(500)

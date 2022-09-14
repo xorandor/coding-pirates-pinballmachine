@@ -9,7 +9,7 @@ const config = {
   },
   sounds: {
     A: "./audio/airhorn.mp3",
-    B: "./audio/darth-vadser-power.mp3",
+    B: "./audio/darth-vader-power.mp3",
     C: "./audio/ding.mp3",
     D: "./audio/explosion.mp3",
   },

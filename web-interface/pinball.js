@@ -60,6 +60,10 @@ function updateBallDisplay() {
 }
 function dispatch(input) {
   const [key, value] = input.split("=");
+
+  if(typeof key !== 'string' || typeof value !== 'string')
+    return;
+
   if (config.debug) {
     logDebugCommand(input);
   }
@@ -68,6 +72,10 @@ function dispatch(input) {
   }
   switch (key) {
     case "POINT":
+
+      if(isNaN(value))
+        break;
+
       points += Number(value);
       document.querySelector("#point").textContent = points;
       break;
@@ -107,18 +115,24 @@ async function setUpMicroBit() {
 
   daplink.setSerialBaudrate(115200);
   daplink.startSerialRead();
+
   var buffer = "";
+
   daplink.on(DAPjs.DAPLink.EVENT_SERIAL_DATA, function (data) {
+    
     buffer += data;
+
     while (true) {
-      var datarowEnd = buffer.indexOf("\r\n");
+
+      var datarowEnd = buffer.indexOf("#");
       if (datarowEnd == -1) {
         break;
       }
+
       var datarow = buffer.substring(0, datarowEnd).trim();
-      buffer = buffer.substring(datarowEnd + 1);
 
       dispatch(datarow);
+      buffer = buffer.substring(datarowEnd + 1);
     }
   });
 }

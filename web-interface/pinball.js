@@ -1,5 +1,6 @@
 let points = 0;
 let gameRunning = false;
+let connected = false;
 
 const config = {
   numberOfBalls: 3,
@@ -25,6 +26,7 @@ window.dispatch = dispatch;
 function startGame()
 {
   config.numberOfBalls = 3;
+  points = 0;
   gameRunning = true;
   dispatch("STATUS=nyt spil startet");
 }
@@ -49,23 +51,25 @@ function init() {
 
 function setupEventListeners() {
   document.querySelector(config.output.start).addEventListener("click", (e) => {
-    document.querySelector(config.output.start).getElementsByClassName.display =
-      "none";
+    document.querySelector(config.output.start).getElementsByClassName.display = "none";
 
-    gameRunning = true;
+    if(!connected)
+      setUpMicroBit();
 
-    updateBallDisplay();
+    startGame()
 
     //dispatch("LYD=A");
     dispatch("POINT=0");
     dispatch("STATUS= ");
 
-    setUpMicroBit();
+    updateScreen();    
   });
 
   navigator.usb.addEventListener("disconnect", function (event) {
     console.log("device disconnect");
     console.log(event);
+    alert(event);
+    connected = false;
   });
 }
 
@@ -97,28 +101,41 @@ function dispatch(input) {
         break;
 
       points += Number(value);
-      document.querySelector(config.output.points).textContent = points;
+      
       break;
     case "STATUS":
       if (value === "out") {
         config.numberOfBalls--;
-        updateBallDisplay();
+        
         if (config.numberOfBalls < 1) {
           gameOver();
         }
       } else if (value === "enter") {
-        document.querySelector(config.output.status).textContent = "Lad os spille";
-        setTimeout(() => {
-          document.querySelector(config.output.status).textContent = "";
-        }, 2000);
+        updateStatus("Lad os spille");
       } else {
-        document.querySelector(config.output.status).textContent = value;
+        updateStatus(value);
       }
       break;
     case "LYD":
       playSound(value);
       break;
   }
+
+  updateScreen();
+}
+
+function updateStatus(text)
+{
+  document.querySelector(config.output.status).textContent = text;
+  setTimeout(() => {
+    document.querySelector(config.output.status).textContent = "";
+  }, 2000);
+}
+
+function updateScreen()
+{
+  updateBallDisplay();
+  document.querySelector(config.output.points).textContent = points;
 }
 
 function playSound(value) {
@@ -145,9 +162,11 @@ async function setUpMicroBit() {
   const daplink = new DAPjs.DAPLink(transport);
   try {
     await daplink.connect();
+    connected = true;
   } catch (error) {
     console.error(error.message || error);
     alert(error);
+    return;
   }
 
   daplink.setSerialBaudrate(115200);

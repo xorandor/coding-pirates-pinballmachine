@@ -1,6 +1,7 @@
 let LampeTaendt = 0
 input.onPinPressed(TouchPin.P0, function () {
     serial.writeLine("POINT=10#")
+    serial.writeLine("LYD=C#")
     pins.digitalWritePin(DigitalPin.P16, 1)
     LampeTaendt = 1
 })

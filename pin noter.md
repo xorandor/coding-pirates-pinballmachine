@@ -1,6 +1,6 @@
 # Brug af pins
 Der er tre ledige touch pins: 0, 1, 2. Gode at bruge til kontakterne
-Digital pins er fine til led's. Umiddelbart ledige pins: 8, 12, 16
+Digital pins kan bruges til både LED og kontakter. Umiddelbart ledige pins: 8, 12, 16
 
 # Analyse af kontakters tilslutning
 

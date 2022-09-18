@@ -1,4 +1,6 @@
 let points = 0;
+let gameRunning = false;
+
 const config = {
   numberOfBalls: 3,
   output: {
@@ -15,39 +17,115 @@ const config = {
   },
   debug: true,
 };
+
 init();
+
 window.dispatch = dispatch;
+
+function startGame()
+{
+  config.numberOfBalls = 3;
+  gameRunning = true;
+  dispatch("STATUS=nyt spil startet");
+}
+
+function gameOver() {
+  document.querySelector(config.output.start).getElementsByClassName.display = "initial";
+  dispatch("STATUS=Game Over");
+  gameRunning = false;
+}
+
 function init() {
   if (config.debug) {
     const ta = document.createElement("textarea");
     ta.id = "output";
+    ta.rows = 10;
     document.body.appendChild(ta);
     console.log("tests");
   }
   dispatch("STATUS=Press start to play");
   setupEventListeners();
 }
+
 function setupEventListeners() {
   document.querySelector(config.output.start).addEventListener("click", (e) => {
     document.querySelector(config.output.start).getElementsByClassName.display =
       "none";
-    points = 0;
-    config.numberOfBalls = 3;
+
+    gameRunning = true;
+
     updateBallDisplay();
-    dispatch("LYD=A");
+
+    //dispatch("LYD=A");
     dispatch("POINT=0");
     dispatch("STATUS= ");
+
     setUpMicroBit();
   });
+
   navigator.usb.addEventListener("disconnect", function (event) {
     console.log("device disconnect");
     console.log(event);
   });
 }
+
+function dispatch(input) {
+
+  const [key, value] = input.split("=");
+
+  if(typeof key !== 'string' || typeof value !== 'string')
+    return;
+
+  if (config.debug) {
+    logDebugCommand(input);
+  }
+
+  if(!gameRunning)
+  {
+    console.log("Ignoreret kommando, da spillet ikke kører: " + input);
+    return;
+  }
+
+  if (value.includes("<")) {
+    return;
+  }
+
+  switch (key) {
+    case "POINT":
+
+      if(isNaN(value))
+        break;
+
+      points += Number(value);
+      document.querySelector(config.output.points).textContent = points;
+      break;
+    case "STATUS":
+      if (value === "out") {
+        config.numberOfBalls--;
+        updateBallDisplay();
+        if (config.numberOfBalls < 1) {
+          gameOver();
+        }
+      } else if (value === "enter") {
+        document.querySelector(config.output.status).textContent = "Lad os spille";
+        setTimeout(() => {
+          document.querySelector(config.output.status).textContent = "";
+        }, 2000);
+      } else {
+        document.querySelector(config.output.status).textContent = value;
+      }
+      break;
+    case "LYD":
+      playSound(value);
+      break;
+  }
+}
+
 function playSound(value) {
   const audio = new Audio(config.sounds[value]);
   audio.play();
 }
+
 function updateBallDisplay() {
   const element = document.querySelector(config.output.lives);
   element.innerHTML = "";
@@ -58,48 +136,7 @@ function updateBallDisplay() {
   }
   element.appendChild(fragment);
 }
-function dispatch(input) {
-  const [key, value] = input.split("=");
 
-  if(typeof key !== 'string' || typeof value !== 'string')
-    return;
-
-  if (config.debug) {
-    logDebugCommand(input);
-  }
-  if (value.includes("<")) {
-    return;
-  }
-  switch (key) {
-    case "POINT":
-
-      if(isNaN(value))
-        break;
-
-      points += Number(value);
-      document.querySelector("#point").textContent = points;
-      break;
-    case "STATUS":
-      if (value === "out") {
-        config.numberOfBalls--;
-        updateBallDisplay();
-        if (config.numberOfBalls < 1) {
-          gameOver();
-        }
-      } else if (value === "enter") {
-        document.querySelector("#status").textContent = "Lad os spille";
-        setTimeout(() => {
-          document.querySelector("#status").textContent = "";
-        }, 2000);
-      } else {
-        document.querySelector("#status").textContent = value;
-      }
-      break;
-    case "LYD":
-      playSound(value);
-      break;
-  }
-}
 async function setUpMicroBit() {
   const device = await navigator.usb.requestDevice({
     filters: [{ vendorId: 0x0d28, productId: 0x0204 }],
@@ -136,14 +173,11 @@ async function setUpMicroBit() {
     }
   });
 }
+
 function logDebugCommand(command) {
   console.log(command); // first byte of data is length
   const outputElement = document.getElementById("output");
   outputElement.innerHTML += command + "\n";
   outputElement.scrollTop = outputElement.scrollHeight;
 }
-function gameOver() {
-  document.querySelector(config.output.start).getElementsByClassName.display =
-    "initial";
-  dispatch("STATUS=Game Over");
-}
+

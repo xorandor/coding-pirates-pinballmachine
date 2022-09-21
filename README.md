@@ -1,6 +1,6 @@
 # Lav din egen pinball maskine
 
-Short url: shorturl.at/fnu56
+Short url: **shorturl.at/fnu56**
 
 ## Kom i gang med websiden til scoreboardet
 

@@ -23,8 +23,7 @@ init();
 
 window.dispatch = dispatch;
 
-function startGame()
-{
+function startGame() {
   config.numberOfBalls = 3;
   points = 0;
   gameRunning = true;
@@ -32,7 +31,7 @@ function startGame()
 }
 
 function gameOver() {
-  document.querySelector(config.output.start).getElementsByClassName.display = "initial";
+  document.querySelector(config.output.start).display = "initial";
   dispatch("STATUS=Game Over");
   gameRunning = false;
 }
@@ -51,18 +50,17 @@ function init() {
 
 function setupEventListeners() {
   document.querySelector(config.output.start).addEventListener("click", (e) => {
-    document.querySelector(config.output.start).getElementsByClassName.display = "none";
+    document.querySelector(config.output.start).display = "none";
 
-    if(!connected)
-      setUpMicroBit();
+    if (!connected) setUpMicroBit();
 
-    startGame()
+    startGame();
 
     //dispatch("LYD=A");
     dispatch("POINT=0");
     dispatch("STATUS= ");
 
-    updateScreen();    
+    updateScreen();
   });
 
   navigator.usb.addEventListener("disconnect", function (event) {
@@ -74,18 +72,15 @@ function setupEventListeners() {
 }
 
 function dispatch(input) {
-
   const [key, value] = input.split("=");
 
-  if(typeof key !== 'string' || typeof value !== 'string')
-    return;
+  if (typeof key !== "string" || typeof value !== "string") return;
 
   if (config.debug) {
     logDebugCommand(input);
   }
 
-  if(!gameRunning)
-  {
+  if (!gameRunning) {
     console.log("Ignoreret kommando, da spillet ikke kører: " + input);
     return;
   }
@@ -96,17 +91,15 @@ function dispatch(input) {
 
   switch (key) {
     case "POINT":
-
-      if(isNaN(value))
-        break;
+      if (isNaN(value)) break;
 
       points += Number(value);
-      
+
       break;
     case "STATUS":
       if (value === "out") {
         config.numberOfBalls--;
-        
+
         if (config.numberOfBalls < 1) {
           gameOver();
         }
@@ -124,16 +117,14 @@ function dispatch(input) {
   updateScreen();
 }
 
-function updateStatus(text)
-{
+function updateStatus(text) {
   document.querySelector(config.output.status).textContent = text;
   setTimeout(() => {
     document.querySelector(config.output.status).textContent = "";
   }, 2000);
 }
 
-function updateScreen()
-{
+function updateScreen() {
   updateBallDisplay();
   document.querySelector(config.output.points).textContent = points;
 }
@@ -175,11 +166,9 @@ async function setUpMicroBit() {
   var buffer = "";
 
   daplink.on(DAPjs.DAPLink.EVENT_SERIAL_DATA, function (data) {
-    
     buffer += data;
 
     while (true) {
-
       var datarowEnd = buffer.indexOf("#");
       if (datarowEnd == -1) {
         break;
@@ -199,4 +188,3 @@ function logDebugCommand(command) {
   outputElement.innerHTML += command + "\n";
   outputElement.scrollTop = outputElement.scrollHeight;
 }
-
